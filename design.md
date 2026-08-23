@@ -7,7 +7,7 @@ classDiagram
     Block "1" --> "1" Stats : ha
 
     
-  % Definizione Attributi CityState
+  %% Definizione Attributi CityState
     class CityState {
         Strategy
         Tick

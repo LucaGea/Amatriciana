@@ -1,45 +1,130 @@
+```mermaid
 classDiagram
-    %% Associazioni principali
-    CityMayor --> City : gestisce
-    City --> Grid : 1 rappresentata da
-    City --> CityState : possiede
-    Grid --> Block : composta da
-    Block "1" --> "1" Stats : ha
+    direction TB
 
-    
-  %% Definizione Attributi CityState
+    %% ==========================================
+    %% 1. DEFINIZIONE CLASSI E INTERFACCE
+    %% ==========================================
+
+    class CityMayor {
+        +setBlock(Block block) void
+        +activatePolicy(CityPolicyStrategy policy) void
+    }
+
+    class City {
+        +initNewCity() void
+        %% Metodi futuri per l'I/O previsti dalle specifiche
+        +saveCity() void
+        +loadCity() void
+    }
+
     class CityState {
-        Strategy
-        Tick
-        Polution
-        Money
-        Happines
-        Population
-        Energy
-        Workers
+        -CityPolicyStrategy currentPolicy
+        -Tick currTick
+        -Stats cityStats
+        +updateStats(Stats newStats) void
+        +getCityStats() Stats
+        +setPolicy(CityPolicyStrategy p) void
+        +processTick() void
     }
 
-    %% Definizione Attributi Stats
+    class CityPolicyStrategy {
+        <<interface>>
+        +calculateStats(Stats rawStats) Stats
+    }
+
+    class EnvironmentalTax {
+        +calculateStats(Stats rawStats) Stats
+    }
+
+    class IndustrialExpansion {
+        +calculateStats(Stats rawStats) Stats
+    }
+
+    class Grid {
+        -Block[][] Griglia
+        +getBlock(int x, int y) Block
+        +calculateRawStats() Stats
+    }
+
+    class Block {
+        <<abstract>>
+        -boolean free
+        -int x
+        -int y
+        +isFree() boolean
+        +returnStat() Stats
+    }
+
     class Stats {
-        Polution
-        Money
-        Happines
-        Population
-        Energy
-        Operative
+        -int pollution
+        -int money
+        -int happiness
+        -int population
+        -int energy
+        -int operative
+        +add(Stats other) void
     }
 
-    %% Albero di Ereditarietà (Livello 1)
+    class Infrastructure {
+        <<abstract>>
+    }
+    
+    class Building {
+        <<abstract>>
+    }
+
+    class PowerPlant {
+        +returnStat() Stats
+    }
+    
+    class Road {
+        +returnStat() Stats
+    }
+    
+    class Park {
+        +returnStat() Stats
+    }
+
+    class Residential {
+        +returnStat() Stats
+    }
+    
+    class Factory {
+        +returnStat() Stats
+    }
+    
+    class Commercial {
+        +returnStat() Stats
+    }
+
+    %% ==========================================
+    %% 2. RELAZIONI, ASSOCIAZIONI ED EREDITARIETÀ
+    %% ==========================================
+
+    CityMayor --> City : gestisce
+    City --> CityState : possiede
+    City --> Grid : 1 rappresentata da
+    Grid --> Block : composta da
+    
+    %% CityState possiede le statistiche attuali della città
+    CityState "1" *-- "1" Stats : contiene
+
+    %% Block crea le statistiche per il calcolo del delta
+    Block ..> Stats : crea / restituisce
+
+    CityState o-- CityPolicyStrategy : utilizza
+    CityPolicyStrategy <|.. EnvironmentalTax : realizza
+    CityPolicyStrategy <|.. IndustrialExpansion : realizza
+
     Block <|-- Infrastructure
     Block <|-- Building
-    Block <|-- Empty
 
-    %% Albero di Ereditarietà Infrastrutture (Livello 2)
     Infrastructure <|-- PowerPlant
     Infrastructure <|-- Road
     Infrastructure <|-- Park
 
-    %% Albero di Ereditarietà Edifici (Livello 2)
     Building <|-- Residential
     Building <|-- Factory
-    Building <|-- Commertial
+    Building <|-- Commercial
+```

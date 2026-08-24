@@ -6,8 +6,7 @@ classDiagram
     %% 1. DEFINIZIONE CLASSI E INTERFACCE
     %% ==========================================
 
-    
-    class CityMayor {
+    class GameController {
         +setBlock(Block block) void
         +activatePolicy(CityPolicyStrategy policy) void
         +startNewGame() void
@@ -15,20 +14,40 @@ classDiagram
         +advanceTime() void
     }
 
+    class BlockFactory {
+        +createBlock(String blockType) Block
+    }
+
+    class CityPersistenceManager {
+        +saveCity(City city, String filePath) void
+        +loadCity(String filePath) City
+    }
+
+    class CityObserver {
+        <<interface>>
+        +update(Stats currentStats) void
+    }
+
+    class DashboardView {
+        +update(Stats currentStats) void
+    }
+
     class City {
         +initCity() void
-        +initCity(String filePath) void
-        +saveCity(String filePath) void
         +processTick() void
     }
+    
     class CityState {
         -CityPolicyStrategy currentPolicy
         -Tick currTick
         -Stats cityStats
+        -List~CityObserver~ observers
         +updateStats(Stats newStats) void
         +getCityStats() Stats
         +setPolicy(CityPolicyStrategy p) void
         +processTick() void
+        +addObserver(CityObserver o) void
+        +notifyObservers() void
     }
 
     class CityPolicyStrategy {
@@ -53,6 +72,7 @@ classDiagram
     class Block {
         <<abstract>>
         -boolean free
+        -boolean isOperative
         -int x
         -int y
         +isFree() boolean
@@ -65,7 +85,6 @@ classDiagram
         -int happiness
         -int population
         -int energy
-        -int operative
         +add(Stats other) void
     }
 
@@ -105,10 +124,20 @@ classDiagram
     %% 2. RELAZIONI, ASSOCIAZIONI ED EREDITARIETÀ
     %% ==========================================
 
-    CityMayor --> City : gestisce
+    GameController --> City : gestisce
+    
+    %% Relazioni Pattern e Gestori Esterni
+    GameController ..> BlockFactory : delega creazione a
+    GameController ..> CityPersistenceManager : delega I/O a
+    BlockFactory ..> Block : istanzia
+
     City --> CityState : possiede
     City --> Grid : 1 rappresentata da
     Grid --> Block : composta da
+    
+    %% Observer Pattern
+    CityObserver <|.. DashboardView : realizza
+    CityState o-- "*" CityObserver : notifica
     
     %% CityState possiede le statistiche attuali della città
     CityState "1" *-- "1" Stats : contiene

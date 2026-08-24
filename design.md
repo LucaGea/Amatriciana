@@ -6,18 +6,21 @@ classDiagram
     %% 1. DEFINIZIONE CLASSI E INTERFACCE
     %% ==========================================
 
+    
     class CityMayor {
         +setBlock(Block block) void
         +activatePolicy(CityPolicyStrategy policy) void
+        +startNewGame() void
+        +loadGame(String filePath) void
+        +advanceTime() void
     }
 
     class City {
-        +initNewCity() void
-        %% Metodi futuri per l'I/O previsti dalle specifiche
-        +saveCity() void
-        +loadCity() void
+        +initCity() void
+        +initCity(String filePath) void
+        +saveCity(String filePath) void
+        +processTick() void
     }
-
     class CityState {
         -CityPolicyStrategy currentPolicy
         -Tick currTick

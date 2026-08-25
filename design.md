@@ -85,7 +85,13 @@ classDiagram
         -int happiness
         -int population
         -int energy
+        +getPollution() int
+        +getMoney() int
+        +getHappiness() int
+        +getPopulation() int
+        +getEnergy() int
         +add(Stats other) void
+        +multiply(double factor) void
     }
 
     class Infrastructure {

@@ -7,15 +7,15 @@ classDiagram
     %% ==========================================
 
     class GameController {
-        +setBlock(Block block) void
+        +setCell(Cell cell) void
         +activatePolicy(CityPolicyStrategy policy) void
         +startNewGame() void
         +loadGame(String filePath) void
         +advanceTime() void
     }
 
-    class BlockFactory {
-        +createBlock(String blockType) Block
+    class CellFactory {
+        +createCell(String cellType) Cell
     }
 
     class CityPersistenceManager {
@@ -64,12 +64,12 @@ classDiagram
     }
 
     class Grid {
-        -Block[][] Griglia
-        +getBlock(int x, int y) Block
+        -Cell[][] Griglia
+        +getCell(int x, int y) Cell
         +calculateRawStats() Stats
     }
 
-    class Block {
+    class Cell {
         <<abstract>>
         -boolean free
         -boolean isOperative
@@ -127,13 +127,13 @@ classDiagram
     GameController --> City : gestisce
     
     %% Relazioni Pattern e Gestori Esterni
-    GameController ..> BlockFactory : delega creazione a
+    GameController ..> CellFactory : delega creazione a
     GameController ..> CityPersistenceManager : delega I/O a
-    BlockFactory ..> Block : istanzia
+    CellFactory ..> Cell : istanzia
 
     City --> CityState : possiede
     City --> Grid : 1 rappresentata da
-    Grid --> Block : composta da
+    Grid --> Cell : composta da
     
     %% Observer Pattern
     CityObserver <|.. DashboardView : realizza
@@ -142,15 +142,15 @@ classDiagram
     %% CityState possiede le statistiche attuali della città
     CityState "1" *-- "1" Stats : contiene
 
-    %% Block crea le statistiche per il calcolo del delta
-    Block ..> Stats : crea / restituisce
+    %% Cell crea le statistiche per il calcolo del delta
+    Cell ..> Stats : crea / restituisce
 
     CityState o-- CityPolicyStrategy : utilizza
     CityPolicyStrategy <|.. EnvironmentalTax : realizza
     CityPolicyStrategy <|.. IndustrialExpansion : realizza
 
-    Block <|-- Infrastructure
-    Block <|-- Building
+    Cell <|-- Infrastructure
+    Cell <|-- Building
 
     Infrastructure <|-- PowerPlant
     Infrastructure <|-- Road
